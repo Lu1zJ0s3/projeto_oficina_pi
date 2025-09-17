@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Perfil - {{ user.get_full_name|default:user.username }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Editar Perfil</h1>
+        <p class="text-gray-600">
+            Atualize suas informações pessoais e configurações da conta.
+        </p>
+    </div>
+
+    <!-- Formulário -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Informações pessoais -->
+            <div class="border-b border-gray-200 pb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-user mr-2 text-blue-600"></i>
+                    Informações Pessoais
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nome -->
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nome
+                        </label>
+                        <input type="text" name="first_name" id="first_name" 
+                               value="{{ user.first_name|default:'' }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Seu nome">
+                    </div>
+
+                    <!-- Sobrenome -->
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">
+                            Sobrenome
+                        </label>
+                        <input type="text" name="last_name" id="last_name" 
+                               value="{{ user.last_name|default:'' }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="Seu sobrenome">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            E-mail
+                        </label>
+                        <input type="email" name="email" id="email" 
+                               value="{{ user.email|default:'' }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="seu@email.com">
+                    </div>
+
+                    <!-- Telefone -->
+                    <div>
+                        <label for="telefone" class="block text-sm font-medium text-gray-700 mb-2">
+                            Telefone
+                        </label>
+                        <input type="tel" name="telefone" id="telefone" 
+                               value="{{ user.telefone|default:'' }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="(11) 99999-9999">
+                    </div>
+
+                    <!-- Data de nascimento -->
+                    <div>
+                        <label for="data_nascimento" class="block text-sm font-medium text-gray-700 mb-2">
+                            Data de Nascimento
+                        </label>
+                        <input type="date" name="data_nascimento" id="data_nascimento" 
+                               value="{{ user.data_nascimento|date:'Y-m-d'|default:'' }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <!-- Endereço -->
+                <div class="mt-6">
+                    <label for="endereco" class="block text-sm font-medium text-gray-700 mb-2">
+                        Endereço
+                    </label>
+                    <textarea name="endereco" id="endereco" rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Seu endereço completo">{{ user.endereco|default:'' }}</textarea>
+                </div>
+            </div>
+
+            <!-- Informações da conta -->
+            <div class="border-b border-gray-200 pb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-green-600"></i>
+                    Informações da Conta
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Username -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Nome de Usuário
+                        </label>
+                        <div class="p-3 bg-gray-50 rounded-md border">
+                            <p class="text-gray-900">{{ user.username }}</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Não pode ser alterado</p>
+                    </div>
+
+                    <!-- Tipo de usuário -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Tipo de Usuário
+                        </label>
+                        <div class="p-3 bg-gray-50 rounded-md border">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if user.tipo_usuario == 'proprietario' %}bg-purple-100 text-purple-800
+                                {% elif user.tipo_usuario == 'gerente' %}bg-blue-100 text-blue-800
+                                {% else %}bg-green-100 text-green-800{% endif %}">
+                                {% if user.tipo_usuario == 'proprietario' %}
+                                    <i class="fas fa-crown mr-1"></i>Proprietário
+                                {% elif user.tipo_usuario == 'gerente' %}
+                                    <i class="fas fa-user-tie mr-1"></i>Gerente
+                                {% else %}
+                                    <i class="fas fa-user mr-1"></i>Vendedor
+                                {% endif %}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Definido pelo administrador</p>
+                    </div>
+
+                    <!-- CPF -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            CPF
+                        </label>
+                        <div class="p-3 bg-gray-50 rounded-md border">
+                            <p class="text-gray-900">{{ user.cpf|default:"Não informado" }}</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Não pode ser alterado</p>
+                    </div>
+
+                    <!-- Data de cadastro -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Data de Cadastro
+                        </label>
+                        <div class="p-3 bg-gray-50 rounded-md border">
+                            <p class="text-gray-900">{{ user.date_joined|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'usuarios:perfil' %}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>
+                    Salvar Alterações
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script para formatação de telefone -->
+<script>
+document.getElementById('telefone').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    value = value.replace(/(\d{2})(\d)/, '($1) $2'); // Coloca parênteses após 2 dígitos
+    value = value.replace(/(\d{5})(\d)/, '$1-$2'); // Coloca hífen após 5 dígitos
+    value = value.replace(/(-\d{4})\d+?$/, '$1'); // Limita a 4 dígitos após o hífen
+    e.target.value = value;
+});
+</script>
+{% endblock %}

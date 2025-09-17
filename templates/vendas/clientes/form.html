@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            {% if cliente %}Editar Cliente{% else %}Novo Cliente{% endif %}
+        </h1>
+        <p class="text-gray-600">
+            {% if cliente %}
+                Atualize as informações do cliente {{ cliente.nome }}.
+            {% else %}
+                Cadastre um novo cliente no sistema.
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Formulário -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Informações básicas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nome -->
+                <div>
+                    <label for="{{ form.nome.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nome *
+                    </label>
+                    {{ form.nome }}
+                    {% if form.nome.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.nome.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tipo -->
+                <div>
+                    <label for="{{ form.tipo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tipo *
+                    </label>
+                    {{ form.tipo }}
+                    {% if form.tipo.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.tipo.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- CPF/CNPJ -->
+                <div>
+                    <label for="{{ form.cpf_cnpj.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        CPF/CNPJ *
+                    </label>
+                    {{ form.cpf_cnpj }}
+                    {% if form.cpf_cnpj.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.cpf_cnpj.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        E-mail
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Telefone -->
+                <div>
+                    <label for="{{ form.telefone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Telefone *
+                    </label>
+                    {{ form.telefone }}
+                    {% if form.telefone.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.telefone.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- CEP -->
+                <div>
+                    <label for="{{ form.cep.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        CEP *
+                    </label>
+                    {{ form.cep }}
+                    {% if form.cep.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.cep.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Endereço -->
+            <div>
+                <label for="{{ form.endereco.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Endereço *
+                </label>
+                {{ form.endereco }}
+                {% if form.endereco.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.endereco.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Cidade e Estado -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cidade -->
+                <div>
+                    <label for="{{ form.cidade.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Cidade *
+                    </label>
+                    {{ form.cidade }}
+                    {% if form.cidade.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.cidade.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Estado -->
+                <div>
+                    <label for="{{ form.estado.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Estado *
+                    </label>
+                    {{ form.estado }}
+                    {% if form.estado.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.estado.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% url 'vendas:lista_clientes' %}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if cliente %}Atualizar{% else %}Criar{% endif %} Cliente
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript para formatação automática -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Formatação do CPF/CNPJ
+    const cpfCnpjInput = document.getElementById('{{ form.cpf_cnpj.id_for_label }}');
+    if (cpfCnpjInput) {
+        cpfCnpjInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                // CPF
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            } else {
+                // CNPJ
+                value = value.replace(/(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1/$2');
+                value = value.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+    }
+
+    // Formatação do telefone
+    const telefoneInput = document.getElementById('{{ form.telefone.id_for_label }}');
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+    }
+
+    // Formatação do CEP
+    const cepInput = document.getElementById('{{ form.cep.id_for_label }}');
+    if (cepInput) {
+        cepInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if produto %}Editar {{ produto.nome }}{% else %}Novo Produto{% endif %} - Isailtom Motos
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    {% if produto %}Editar Produto{% else %}Novo Produto{% endif %}
+                </h1>
+                <p class="text-gray-600">
+                    {% if produto %}
+                        Atualize as informações do produto "{{ produto.nome }}".
+                    {% else %}
+                        Cadastre um novo produto no seu catálogo.
+                    {% endif %}
+                </p>
+            </div>
+            <a href="{% url 'produtos:lista' %}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Informações básicas -->
+            <div class="border-b border-gray-200 pb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                    Informações Básicas
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nome -->
+                    <div>
+                        <label for="{{ form.nome.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.nome.label }}
+                        </label>
+                        {{ form.nome }}
+                        {% if form.nome.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.nome.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Categoria -->
+                    <div>
+                        <label for="{{ form.categoria.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.categoria.label }}
+                        </label>
+                        {{ form.categoria }}
+                        {% if form.categoria.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.categoria.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Marca -->
+                    <div>
+                        <label for="{{ form.marca.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.marca.label }}
+                        </label>
+                        {{ form.marca }}
+                        {% if form.marca.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.marca.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tipo -->
+                    <div>
+                        <label for="{{ form.tipo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.tipo.label }}
+                        </label>
+                        {{ form.tipo }}
+                        {% if form.tipo.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.tipo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="mt-6">
+                    <label for="{{ form.descricao.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descricao.label }}
+                    </label>
+                    {{ form.descricao }}
+                    {% if form.descricao.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.descricao.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Especificações técnicas -->
+            <div class="border-b border-gray-200 pb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-green-600"></i>
+                    Especificações Técnicas
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Modelo -->
+                    <div>
+                        <label for="{{ form.modelo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.modelo.label }}
+                        </label>
+                        {{ form.modelo }}
+                        {% if form.modelo.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.modelo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Ano -->
+                    <div>
+                        <label for="{{ form.ano.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.ano.label }}
+                        </label>
+                        {{ form.ano }}
+                        {% if form.ano.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.ano.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Cilindrada -->
+                    <div>
+                        <label for="{{ form.cilindrada.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.cilindrada.label }}
+                        </label>
+                        {{ form.cilindrada }}
+                        {% if form.cilindrada.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.cilindrada.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Cor -->
+                    <div>
+                        <label for="{{ form.cor.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.cor.label }}
+                        </label>
+                        {{ form.cor }}
+                        {% if form.cor.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.cor.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preços e estoque -->
+            <div class="border-b border-gray-200 pb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-dollar-sign mr-2 text-yellow-600"></i>
+                    Preços e Estoque
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Preço -->
+                    <div>
+                        <label for="{{ form.preco.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.preco.label }}
+                        </label>
+                        {{ form.preco }}
+                        {% if form.preco.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.preco.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Preço promocional -->
+                    <div>
+                        <label for="{{ form.preco_promocional.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.preco_promocional.label }}
+                        </label>
+                        {{ form.preco_promocional }}
+                        {% if form.preco_promocional.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.preco_promocional.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Estoque -->
+                    <div>
+                        <label for="{{ form.estoque.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.estoque.label }}
+                        </label>
+                        {{ form.estoque }}
+                        {% if form.estoque.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.estoque.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Estoque mínimo -->
+                    <div>
+                        <label for="{{ form.estoque_minimo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.estoque_minimo.label }}
+                        </label>
+                        {{ form.estoque_minimo }}
+                        {% if form.estoque_minimo.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.estoque_minimo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Código de barras -->
+                <div class="mt-6">
+                    <label for="{{ form.codigo_barras.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.codigo_barras.label }}
+                    </label>
+                    {{ form.codigo_barras }}
+                    {% if form.codigo_barras.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {% for error in form.codigo_barras.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mídia e configurações -->
+            <div class="border-b border-gray-200 pb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-image mr-2 text-purple-600"></i>
+                    Mídia e Configurações
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Imagem principal -->
+                    <div>
+                        <label for="{{ form.imagem_principal.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.imagem_principal.label }}
+                        </label>
+                        {{ form.imagem_principal }}
+                        {% if produto and produto.imagem_principal %}
+                            <div class="mt-2">
+                                <img src="{{ produto.imagem_principal.url }}" alt="Imagem atual" class="w-32 h-32 object-cover rounded-md">
+                                <p class="text-sm text-gray-500 mt-1">Imagem atual</p>
+                            </div>
+                        {% endif %}
+                        {% if form.imagem_principal.errors %}
+                            <div class="mt-1 text-sm text-red-600">
+                                {% for error in form.imagem_principal.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            {{ form.ativo }}
+                            <label for="{{ form.ativo.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                {{ form.ativo.label }}
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.destaque }}
+                            <label for="{{ form.destaque.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                {{ form.destaque.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'produtos:lista' %}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if produto %}Atualizar{% else %}Salvar{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script para validação em tempo real -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const precoInput = document.querySelector('input[name="preco"]');
+    const precoPromocionalInput = document.querySelector('input[name="preco_promocional"]');
+    
+    // Validar preço promocional
+    function validatePromocionalPrice() {
+        const preco = parseFloat(precoInput.value) || 0;
+        const promocional = parseFloat(precoPromocionalInput.value) || 0;
+        
+        if (promocional > 0 && promocional >= preco) {
+            precoPromocionalInput.setCustomValidity('O preço promocional deve ser menor que o preço normal');
+        } else {
+            precoPromocionalInput.setCustomValidity('');
+        }
+    }
+    
+    if (precoInput && precoPromocionalInput) {
+        precoInput.addEventListener('input', validatePromocionalPrice);
+        precoPromocionalInput.addEventListener('input', validatePromocionalPrice);
+    }
+});
+</script>
+{% endblock %}

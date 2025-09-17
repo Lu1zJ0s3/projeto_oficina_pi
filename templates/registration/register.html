@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastro - Isailtom Motos{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary">
+                <i class="fas fa-motorcycle text-white text-2xl"></i>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
+                Criar nova conta
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Cadastre-se no sistema da Isailtom Motos
+            </p>
+        </div>
+        
+        <form class="mt-8 space-y-6" method="post">
+            {% csrf_token %}
+            
+            {% if errors %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                Erro ao criar conta
+                            </h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    {% for field, error in errors.items %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="id_first_name" class="block text-sm font-medium text-gray-700">
+                            Nome
+                        </label>
+                        <div class="mt-1">
+                            <input type="text" name="first_name" id="id_first_name" 
+                                   value="{{ form_data.first_name|default:'' }}"
+                                   class="block w-full border border-gray-300 rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                                   placeholder="Digite seu nome">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="id_last_name" class="block text-sm font-medium text-gray-700">
+                            Sobrenome
+                        </label>
+                        <div class="mt-1">
+                            <input type="text" name="last_name" id="id_last_name" 
+                                   value="{{ form_data.last_name|default:'' }}"
+                                   class="block w-full border border-gray-300 rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                                   placeholder="Digite seu sobrenome">
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="id_username" class="block text-sm font-medium text-gray-700">
+                        Nome de usuário
+                    </label>
+                    <div class="mt-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" name="username" id="id_username" 
+                               value="{{ form_data.username|default:'' }}"
+                               class="pl-10 block w-full border border-gray-300 rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                               placeholder="Digite seu usuário" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="id_email" class="block text-sm font-medium text-gray-700">
+                        Email
+                    </label>
+                    <div class="mt-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" name="email" id="id_email" 
+                               value="{{ form_data.email|default:'' }}"
+                               class="pl-10 block w-full border border-gray-300 rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                               placeholder="Digite seu email" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="id_password1" class="block text-sm font-medium text-gray-700">
+                        Senha
+                    </label>
+                    <div class="mt-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" name="password1" id="id_password1" 
+                               class="pl-10 block w-full border border-gray-300 rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                               placeholder="Digite sua senha" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="id_password2" class="block text-sm font-medium text-gray-700">
+                        Confirmar senha
+                    </label>
+                    <div class="mt-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" name="password2" id="id_password2" 
+                               class="pl-10 block w-full border border-gray-300 rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                               placeholder="Confirme sua senha" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="id_cpf" class="block text-sm font-medium text-gray-700">
+                        CPF
+                    </label>
+                    <div class="mt-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-id-card text-gray-400"></i>
+                        </div>
+                        <input type="text" name="cpf" id="id_cpf" 
+                               value="{{ form_data.cpf|default:'' }}"
+                               class="pl-10 block w-full border border-gray-300 rounded-lg px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" 
+                               placeholder="000.000.000-00" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="fas fa-user-plus text-primary/60 group-hover:text-primary/80"></i>
+                    </span>
+                    Criar conta
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-sm text-gray-600">
+                    Já tem uma conta? 
+                    <a href="{% url 'usuarios:login' %}" class="font-medium text-primary hover:text-primary/80">
+                        Faça login aqui
+                    </a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Formatação automática do CPF
+document.getElementById('id_cpf').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    value = value.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca ponto após 3 dígitos
+    value = value.replace(/(\d{3})(\d)/, '$1.$2'); // Coloca ponto após 6 dígitos
+    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca hífen antes dos últimos 2 dígitos
+    e.target.value = value;
+});
+</script>
+{% endblock %}

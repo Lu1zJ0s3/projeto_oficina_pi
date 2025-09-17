@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isailtom Motos - Bem-vindo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#1e40af',
+                        'secondary': '#f59e0b',
+                        'accent': '#dc2626'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <i class="fas fa-motorcycle text-3xl text-primary mr-3"></i>
+                    <h1 class="text-3xl font-bold text-gray-900">Isailtom Motos</h1>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="{% url 'usuarios:login' %}" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="bg-gradient-to-r from-primary to-blue-800 text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-5xl font-bold mb-6">Bem-vindo à Isailtom Motos</h2>
+            <p class="text-xl mb-8 max-w-3xl mx-auto">
+                Seu sistema de gestão completo para loja de motos. Gerencie produtos, vendas, clientes e muito mais com facilidade e eficiência.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="{% url 'usuarios:login' %}" class="bg-secondary hover:bg-secondary/90 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Fazer Login
+                </a>
+                <a href="{% url 'usuarios:register' %}" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+                    <i class="fas fa-user-plus mr-2"></i>Cadastrar-se
+                </a>
+                <a href="/api/" class="bg-white hover:bg-gray-100 text-primary px-8 py-3 rounded-lg text-lg font-semibold transition-colors">
+                    <i class="fas fa-code mr-2"></i>API REST
+                </a>
+            </div>
+        </div>
+    </section>
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h3 class="text-3xl font-bold text-center text-gray-900 mb-16">Funcionalidades Principais</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-primary text-4xl mb-4">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3">Gestão de Produtos</h4>
+                    <p class="text-gray-600">
+                        Cadastre e gerencie produtos, categorias, marcas e controle de estoque de forma eficiente.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-secondary text-4xl mb-4">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3">Sistema de Vendas</h4>
+                    <p class="text-gray-600">
+                        Gerencie vendas, clientes e acompanhe o faturamento com relatórios detalhados.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-accent text-4xl mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3">Controle de Usuários</h4>
+                    <p class="text-gray-600">
+                        Sistema de permissões com diferentes níveis de acesso para proprietários, vendedores e gerentes.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-primary text-4xl mb-4">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3">API REST</h4>
+                    <p class="text-gray-600">
+                        API completa para integração com sistemas externos e aplicações mobile.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-secondary text-4xl mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3">Dashboard</h4>
+                    <p class="text-gray-600">
+                        Visualize estatísticas, relatórios e métricas importantes para o seu negócio.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-accent text-4xl mb-4">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold mb-3">Totalmente Responsivo</h4>
+                    <p class="text-gray-600">
+                        Interface adaptada para todos os dispositivos, desde desktop até smartphones.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="bg-gray-100 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-primary mb-2">5</div>
+                    <div class="text-gray-600">Categorias de Produtos</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-secondary mb-2">10</div>
+                    <div class="text-gray-600">Marcas Disponíveis</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-accent mb-2">5</div>
+                    <div class="text-gray-600">Produtos Cadastrados</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-primary mb-2">3</div>
+                    <div class="text-gray-600">Clientes Ativos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h3 class="text-3xl font-bold text-gray-900 mb-6">Pronto para começar?</h3>
+            <p class="text-xl text-gray-600 mb-8">
+                Acesse o sistema agora mesmo e descubra como a Isailtom Motos pode transformar a gestão da sua loja.
+            </p>
+            <a href="{% url 'usuarios:login' %}" class="bg-primary hover:bg-primary/90 text-white px-10 py-4 rounded-lg text-xl font-semibold transition-colors inline-block">
+                <i class="fas fa-rocket mr-2"></i>Acessar Sistema
+            </a>
+        </div>
+    </section>
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Isailtom Motos</h4>
+                    <p class="text-gray-400">
+                        Sistema de gestão completo para lojas de motos, desenvolvido com as melhores tecnologias.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Tecnologias</h4>
+                    <ul class="text-gray-400 space-y-2">
+                        <li>Django Framework</li>
+                        <li>Django REST Framework</li>
+                        <li>Tailwind CSS</li>
+                        <li>SQLite/PostgreSQL</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Links Úteis</h4>
+                    <ul class="text-gray-400 space-y-2">
+                        <li><a href="/admin/" class="hover:text-white transition-colors">Admin</a></li>
+                        <li><a href="/api/" class="hover:text-white transition-colors">API</a></li>
+                        <li><a href="/docs/" class="hover:text-white transition-colors">Documentação</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Isailtom Motos. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

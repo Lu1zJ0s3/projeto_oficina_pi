@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+
+{% block title %}Controle de Estoque - Isailtom Motos{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Controle de Estoque</h1>
+                <p class="text-gray-600">
+                    Monitore e gerencie o estoque de todos os produtos da sua loja.
+                </p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{% url 'produtos:criar' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>
+                    Novo Produto
+                </a>
+                <a href="{% url 'produtos:lista' %}" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-list mr-2"></i>
+                    Ver Produtos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo do estoque -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- Total de produtos -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-box text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total de Produtos</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ produtos.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Produtos em estoque -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-check-circle text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Em Estoque</p>
+                    <p class="text-2xl font-semibold text-gray-900">
+                        {{ produtos_em_estoque|default:"0" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estoque baixo -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-orange-100 text-orange-600">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Estoque Baixo</p>
+                    <p class="text-2xl font-semibold text-gray-900">
+                        {{ produtos_estoque_baixo|default:"0" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sem estoque -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-red-100 text-red-600">
+                    <i class="fas fa-times-circle text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Sem Estoque</p>
+                    <p class="text-2xl font-semibold text-gray-900">
+                        {{ produtos_sem_estoque|default:"0" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Filtros</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Status do estoque -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Status do Estoque</label>
+                <select id="status-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todos</option>
+                    <option value="estoque_ok">Estoque OK</option>
+                    <option value="estoque_baixo">Estoque Baixo</option>
+                    <option value="sem_estoque">Sem Estoque</option>
+                </select>
+            </div>
+
+            <!-- Categoria -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                <select id="categoria-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todas as categorias</option>
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Busca -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                <input type="text" id="search-filter" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Nome do produto...">
+            </div>
+
+            <!-- Ordenar por -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+                <select id="sort-filter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="nome">Nome</option>
+                    <option value="estoque">Estoque</option>
+                    <option value="preco">Preço</option>
+                    <option value="categoria">Categoria</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de produtos -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Produto
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Categoria
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Preço
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Estoque
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Ações
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="produtos-table">
+                    {% for produto in produtos %}
+                    <tr class="produto-row hover:bg-gray-50" 
+                        data-status="{{ produto.estoque_status }}"
+                        data-categoria="{{ produto.categoria.id }}"
+                        data-nome="{{ produto.nome|lower }}">
+                        <!-- Informações do produto -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    {% if produto.imagem_principal %}
+                                        <img class="h-10 w-10 rounded-full object-cover" src="{{ produto.imagem_principal.url }}" alt="{{ produto.nome }}">
+                                    {% else %}
+                                        <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                            <i class="fas fa-image text-gray-500"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ produto.nome }}</div>
+                                    <div class="text-sm text-gray-500">{{ produto.marca.nome }}</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <!-- Categoria -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {{ produto.categoria.nome }}
+                            </span>
+                        </td>
+
+                        <!-- Preço -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                {% if produto.preco_promocional %}
+                                    <span class="text-green-600 font-semibold">R$ {{ produto.preco_promocional }}</span>
+                                    <div class="text-xs text-gray-500 line-through">R$ {{ produto.preco }}</div>
+                                {% else %}
+                                    R$ {{ produto.preco }}
+                                {% endif %}
+                            </div>
+                        </td>
+
+                        <!-- Estoque -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">
+                                <span class="font-medium">{{ produto.estoque }}</span>
+                                <div class="text-xs text-gray-500">Mín: {{ produto.estoque_minimo }}</div>
+                            </div>
+                        </td>
+
+                        <!-- Status -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if produto.estoque == 0 %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-times mr-1"></i>Sem Estoque
+                                </span>
+                            {% elif produto.estoque <= produto.estoque_minimo %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>Estoque Baixo
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check mr-1"></i>Estoque OK
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Ações -->
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <a href="{% url 'produtos:detalhe' produto.pk %}" 
+                                   class="text-blue-600 hover:text-blue-900" title="Ver detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'produtos:editar' produto.pk %}" 
+                                   class="text-green-600 hover:text-green-900" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button onclick="ajustarEstoque({{ produto.pk }}, '{{ produto.nome }}')" 
+                                        class="text-purple-600 hover:text-purple-900" title="Ajustar estoque">
+                                    <i class="fas fa-warehouse"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Estado vazio -->
+    {% if not produtos %}
+    <div class="text-center py-12">
+        <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-warehouse text-3xl text-gray-400"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum produto encontrado</h3>
+        <p class="text-gray-600 mb-6">Comece adicionando produtos ao seu catálogo.</p>
+        <a href="{% url 'produtos:criar' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            <i class="fas fa-plus mr-2"></i>
+            Adicionar Produto
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para ajustar estoque -->
+<div id="estoque-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Ajustar Estoque</h3>
+                <p class="text-sm text-gray-600" id="modal-produto-nome"></p>
+            </div>
+            
+            <div class="px-6 py-4">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Ajuste</label>
+                    <select id="tipo-ajuste" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="entrada">Entrada (Adicionar)</option>
+                        <option value="saida">Saída (Remover)</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade</label>
+                    <input type="number" id="quantidade-ajuste" min="1" value="1"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observação</label>
+                    <textarea id="observacao-ajuste" rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Motivo do ajuste..."></textarea>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button onclick="fecharModal()" 
+                        class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="salvarAjusteEstoque()" 
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+let produtoAtualId = null;
+
+// Filtros
+document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('status-filter');
+    const categoriaFilter = document.getElementById('categoria-filter');
+    const searchFilter = document.getElementById('search-filter');
+    const sortFilter = document.getElementById('sort-filter');
+    
+    // Aplicar filtros
+    function aplicarFiltros() {
+        const status = statusFilter.value;
+        const categoria = categoriaFilter.value;
+        const search = searchFilter.value.toLowerCase();
+        const sort = sortFilter.value;
+        
+        const rows = document.querySelectorAll('.produto-row');
+        
+        rows.forEach(row => {
+            const rowStatus = row.dataset.status;
+            const rowCategoria = row.dataset.categoria;
+            const rowNome = row.dataset.nome;
+            
+            let mostrar = true;
+            
+            // Filtro por status
+            if (status && rowStatus !== status) {
+                mostrar = false;
+            }
+            
+            // Filtro por categoria
+            if (categoria && rowCategoria !== categoria) {
+                mostrar = false;
+            }
+            
+            // Filtro por busca
+            if (search && !rowNome.includes(search)) {
+                mostrar = false;
+            }
+            
+            row.style.display = mostrar ? '' : 'none';
+        });
+    }
+    
+    // Event listeners
+    statusFilter.addEventListener('change', aplicarFiltros);
+    categoriaFilter.addEventListener('change', aplicarFiltros);
+    searchFilter.addEventListener('input', aplicarFiltros);
+    sortFilter.addEventListener('change', aplicarFiltros);
+});
+
+// Funções do modal
+function ajustarEstoque(produtoId, produtoNome) {
+    produtoAtualId = produtoId;
+    document.getElementById('modal-produto-nome').textContent = produtoNome;
+    document.getElementById('estoque-modal').classList.remove('hidden');
+}
+
+function fecharModal() {
+    document.getElementById('estoque-modal').classList.add('hidden');
+    produtoAtualId = null;
+}
+
+function salvarAjusteEstoque() {
+    const tipo = document.getElementById('tipo-ajuste').value;
+    const quantidade = parseInt(document.getElementById('quantidade-ajuste').value);
+    const observacao = document.getElementById('observacao-ajuste').value;
+    
+    if (!quantidade || quantidade <= 0) {
+        alert('Por favor, insira uma quantidade válida.');
+        return;
+    }
+    
+    // Aqui você pode implementar a lógica para salvar o ajuste
+    // Por enquanto, apenas fechamos o modal
+    console.log('Ajuste de estoque:', {
+        produtoId: produtoAtualId,
+        tipo: tipo,
+        quantidade: quantidade,
+        observacao: observacao
+    });
+    
+    fecharModal();
+    alert('Ajuste de estoque realizado com sucesso!');
+}
+
+// Fechar modal ao clicar fora
+document.getElementById('estoque-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        fecharModal();
+    }
+});
+</script>
+{% endblock %}

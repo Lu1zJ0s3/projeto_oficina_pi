@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+
+{% block title %}Produtos - Isailtom Motos{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Produtos</h1>
+                <p class="text-gray-600">
+                    Gerencie o catálogo de produtos da sua loja.
+                </p>
+            </div>
+            <a href="{% url 'produtos:criar' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                Novo Produto
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Filtros</h2>
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Busca -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                <input type="text" name="search" value="{{ request.GET.search }}" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Nome do produto...">
+            </div>
+
+            <!-- Categoria -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                <select name="categoria" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todas as categorias</option>
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                            {{ categoria.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Marca -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                <select name="marca" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todas as marcas</option>
+                    {% for marca in marcas %}
+                        <option value="{{ marca.id }}" {% if request.GET.marca == marca.id|stringformat:"s" %}selected{% endif %}>
+                            {{ marca.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Tipo -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                <select name="tipo" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Todos os tipos</option>
+                    <option value="moto" {% if request.GET.tipo == 'moto' %}selected{% endif %}>Moto</option>
+                    <option value="acessorio" {% if request.GET.tipo == 'acessorio' %}selected{% endif %}>Acessório</option>
+                    <option value="peca" {% if request.GET.tipo == 'peca' %}selected{% endif %}>Peça</option>
+                    <option value="servico" {% if request.GET.tipo == 'servico' %}selected{% endif %}>Serviço</option>
+                </select>
+            </div>
+        </form>
+
+        <!-- Botões de ação -->
+        <div class="mt-4 flex space-x-3">
+            <button type="submit" form="filtros-form" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                <i class="fas fa-search mr-2"></i>
+                Filtrar
+            </button>
+            <a href="{% url 'produtos:lista' %}" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+                <i class="fas fa-times mr-2"></i>
+                Limpar
+            </a>
+        </div>
+    </div>
+
+    <!-- Lista de produtos -->
+    {% if produtos %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for produto in produtos %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <!-- Imagem do produto -->
+                <div class="relative h-48 bg-gray-200">
+                    {% if produto.imagem_principal %}
+                        <img src="{{ produto.imagem_principal.url }}" alt="{{ produto.nome }}" 
+                             class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-image text-4xl text-gray-400"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Badges -->
+                    <div class="absolute top-2 left-2 flex space-x-2">
+                        {% if produto.destaque %}
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-star mr-1"></i>Destaque
+                            </span>
+                        {% endif %}
+                        
+                        {% if produto.estoque == 0 %}
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <i class="fas fa-times mr-1"></i>Sem Estoque
+                            </span>
+                        {% elif produto.estoque <= produto.estoque_minimo %}
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>Estoque Baixo
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Informações do produto -->
+                <div class="p-4">
+                    <!-- Nome e marca -->
+                    <h3 class="font-semibold text-gray-900 mb-1 truncate">{{ produto.nome }}</h3>
+                    <p class="text-sm text-gray-600 mb-2">{{ produto.marca.nome }}</p>
+                    
+                    <!-- Tipo e modelo -->
+                    <div class="flex items-center space-x-2 mb-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {{ produto.get_tipo_display }}
+                        </span>
+                        {% if produto.modelo %}
+                            <span class="text-sm text-gray-500">{{ produto.modelo }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Preços -->
+                    <div class="mb-3">
+                        {% if produto.preco_promocional %}
+                            <p class="text-lg font-bold text-green-600">R$ {{ produto.preco_promocional }}</p>
+                            <p class="text-sm text-gray-500 line-through">R$ {{ produto.preco }}</p>
+                        {% else %}
+                            <p class="text-lg font-bold text-gray-900">R$ {{ produto.preco }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Estoque -->
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm text-gray-600">
+                            Estoque: <span class="font-medium">{{ produto.estoque }}</span>
+                        </span>
+                        <span class="text-xs text-gray-500">{{ produto.categoria.nome }}</span>
+                    </div>
+                    
+                    <!-- Botões de ação -->
+                    <div class="flex space-x-2">
+                        <a href="{% url 'produtos:detalhe' produto.pk %}" 
+                           class="flex-1 px-3 py-2 bg-blue-600 text-white text-center text-sm rounded-md hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-eye mr-1"></i>Ver
+                        </a>
+                        <a href="{% url 'produtos:editar' produto.pk %}" 
+                           class="px-3 py-2 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginação -->
+        {% if is_paginated %}
+        <div class="mt-8 flex justify-center">
+            <nav class="flex items-center space-x-2">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="px-3 py-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                {% endif %}
+                
+                <span class="px-3 py-2 text-gray-700">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+                
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-2 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    {% else %}
+        <!-- Estado vazio -->
+        <div class="text-center py-12">
+            <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-box text-3xl text-gray-400"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum produto encontrado</h3>
+            <p class="text-gray-600 mb-6">
+                {% if request.GET.search or request.GET.categoria or request.GET.marca or request.GET.tipo %}
+                    Tente ajustar os filtros ou
+                {% endif %}
+                Comece adicionando seu primeiro produto.
+            </p>
+            <a href="{% url 'produtos:criar' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                <i class="fas fa-plus mr-2"></i>
+                Adicionar Produto
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Script para aplicar filtros automaticamente -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const selects = form.querySelectorAll('select');
+    const searchInput = form.querySelector('input[name="search"]');
+    
+    // Aplicar filtros automaticamente quando mudar os selects
+    selects.forEach(select => {
+        select.addEventListener('change', () => form.submit());
+    });
+    
+    // Aplicar filtro de busca com delay
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            form.submit();
+        }, 500);
+    });
+});
+</script>
+{% endblock %}

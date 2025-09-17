@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            <i class="fas fa-calculator text-blue-600 mr-3"></i>
+            Atualizar Faturamento
+        </h1>
+        <p class="text-gray-600">
+            Esta funcionalidade recalcula o faturamento para os últimos 30 dias baseado nas vendas aprovadas.
+        </p>
+    </div>
+
+    <!-- Aviso -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">
+                    Informação
+                </h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <p>
+                        Esta ação irá recalcular o faturamento para os últimos 30 dias, incluindo vendas com status "Aprovada" e "Concluída".
+                        O processo pode demorar alguns segundos.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post">
+            {% csrf_token %}
+            <div class="text-center">
+                <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-sync-alt mr-2"></i>
+                    Atualizar Faturamento
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Voltar -->
+    <div class="mt-6 text-center">
+        <a href="{% url 'vendas:faturamento' %}" class="text-blue-600 hover:text-blue-800">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Voltar para Faturamento
+        </a>
+    </div>
+</div>
+{% endblock %}

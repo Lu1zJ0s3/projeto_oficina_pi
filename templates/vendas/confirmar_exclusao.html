@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            <i class="fas fa-trash text-red-600 mr-3"></i>
+            Excluir Venda
+        </h1>
+        <p class="text-gray-600">
+            Confirme a exclusão da venda {{ venda.numero_venda }}.
+        </p>
+    </div>
+
+    <!-- Aviso -->
+    <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-red-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                    Atenção - Esta ação não pode ser desfeita!
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                    <p>
+                        Ao excluir esta venda, todos os itens relacionados também serão removidos permanentemente.
+                        O faturamento será recalculado automaticamente.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações da Venda -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+            Informações da Venda
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Informações do Cliente -->
+            <div>
+                <h4 class="font-medium text-gray-700 mb-3">Cliente</h4>
+                <div class="space-y-2">
+                    <p><span class="font-medium">Nome:</span> {{ venda.cliente.nome }}</p>
+                    <p><span class="font-medium">CPF/CNPJ:</span> {{ venda.cliente.cpf_cnpj }}</p>
+                    <p><span class="font-medium">Telefone:</span> {{ venda.cliente.telefone }}</p>
+                </div>
+            </div>
+            
+            <!-- Informações da Venda -->
+            <div>
+                <h4 class="font-medium text-gray-700 mb-3">Venda</h4>
+                <div class="space-y-2">
+                    <p><span class="font-medium">Número:</span> {{ venda.numero_venda }}</p>
+                    <p><span class="font-medium">Vendedor:</span> {{ venda.vendedor.get_full_name|default:venda.vendedor.username }}</p>
+                    <p><span class="font-medium">Status:</span> 
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                            {% if venda.status == 'concluida' %}bg-green-100 text-green-800
+                            {% elif venda.status == 'aprovada' %}bg-blue-100 text-blue-800
+                            {% elif venda.status == 'pendente' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ venda.get_status_display }}
+                        </span>
+                    </p>
+                    <p><span class="font-medium">Data:</span> {{ venda.data_venda|date:"d/m/Y H:i" }}</p>
+                    <p><span class="font-medium">Total:</span> <span class="text-lg font-bold text-green-600">R$ {{ venda.total|floatformat:2 }}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Itens da Venda -->
+    {% if venda.itens.all %}
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="fas fa-shopping-cart text-green-600 mr-2"></i>
+            Itens que serão excluídos
+        </h3>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Produto
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Quantidade
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Preço Unit.
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Subtotal
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for item in venda.itens.all %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ item.produto.nome }}</div>
+                            <div class="text-sm text-gray-500">{{ item.produto.marca.nome }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ item.quantidade }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            R$ {{ item.preco_unitario|floatformat:2 }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            R$ {{ item.subtotal|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Botões de Confirmação -->
+    <div class="flex justify-center space-x-4">
+        <a href="{% url 'vendas:detalhe' venda.pk %}" class="px-6 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+            <i class="fas fa-times mr-2"></i>Cancelar
+        </a>
+        <form method="post" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
+                <i class="fas fa-trash mr-2"></i>Confirmar Exclusão
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Confirmação adicional via JavaScript
+document.querySelector('form').addEventListener('submit', function(e) {
+    if (!confirm('Tem certeza que deseja excluir esta venda? Esta ação não pode ser desfeita!')) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

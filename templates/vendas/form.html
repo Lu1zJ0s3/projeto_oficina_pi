@@ -1,0 +1,362 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            {% if venda %}Editar Venda{% else %}Nova Venda{% endif %}
+        </h1>
+        <p class="text-gray-600">
+            {% if venda %}
+                Atualize as informações da venda {{ venda.numero_venda }}.
+            {% else %}
+                Registre uma nova venda para um cliente.
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Formulário -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-6" id="venda-form">
+            {% csrf_token %}
+            
+            <!-- Informações da venda -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cliente -->
+                <div>
+                    <label for="{{ form.cliente.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Cliente *
+                    </label>
+                    {{ form.cliente }}
+                    {% if form.cliente.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.cliente.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Status
+                    </label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.status.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Forma de pagamento -->
+                <div>
+                    <label for="{{ form.forma_pagamento.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Forma de Pagamento *
+                    </label>
+                    {{ form.forma_pagamento }}
+                    {% if form.forma_pagamento.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.forma_pagamento.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Desconto -->
+                <div>
+                    <label for="{{ form.desconto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Desconto (R$)
+                    </label>
+                    {{ form.desconto }}
+                    {% if form.desconto.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.desconto.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Observações -->
+            <div>
+                <label for="{{ form.observacoes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Observações
+                </label>
+                {{ form.observacoes }}
+                {% if form.observacoes.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.observacoes.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Itens da Venda -->
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-shopping-cart mr-2 text-blue-600"></i>
+                    Itens da Venda
+                </h3>
+                
+                {{ formset.management_form }}
+                <div id="itens-container" class="space-y-4">
+                    {% for form_item in formset %}
+                    <div class="item-form bg-gray-50 p-4 rounded-lg border">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <!-- Produto -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Produto *
+                                </label>
+                                {{ form_item.produto }}
+                                {% if form_item.produto.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form_item.produto.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Quantidade -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Quantidade *
+                                </label>
+                                {{ form_item.quantidade }}
+                                {% if form_item.quantidade.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form_item.quantidade.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Preço Unitário -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Preço Unitário (R$) *
+                                </label>
+                                {{ form_item.preco_unitario }}
+                                {% if form_item.preco_unitario.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form_item.preco_unitario.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Desconto do Item -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Desconto (R$)
+                                </label>
+                                {{ form_item.desconto_item }}
+                                {% if form_item.desconto_item.errors %}
+                                    <p class="text-red-600 text-sm mt-1">{{ form_item.desconto_item.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Subtotal do item -->
+                        <div class="mt-3 text-right">
+                            <span class="text-sm text-gray-600">Subtotal: </span>
+                            <span class="font-semibold text-blue-600 item-subtotal">R$ 0,00</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Botão para adicionar mais itens -->
+                <div class="mt-4">
+                    <button type="button" id="adicionar-item" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>
+                        Adicionar Item
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resumo da Venda -->
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumo da Venda</h3>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-sm text-gray-600">Subtotal</p>
+                            <p class="text-xl font-semibold text-gray-900" id="subtotal-resumo">R$ 0,00</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Desconto</p>
+                            <p class="text-xl font-semibold text-red-600" id="desconto-resumo">R$ 0,00</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total</p>
+                            <p class="text-2xl font-bold text-green-600" id="total-resumo">R$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <a href="{% url 'vendas:lista' %}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if venda %}Atualizar{% else %}Criar{% endif %} Venda
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript para cálculos automáticos -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const itensContainer = document.getElementById('itens-container');
+    const adicionarItemBtn = document.getElementById('adicionar-item');
+    const descontoInput = document.getElementById('{{ form.desconto.id_for_label }}');
+    
+    // Armazenar opções de produtos para uso no JavaScript
+    const produtosOptions = `
+        <option value="">Selecione um produto</option>
+        {% for produto in produtos %}
+        <option value="{{ produto.id }}">{{ produto.nome }} - R$ {{ produto.preco_atual }}</option>
+        {% endfor %}
+    `;
+    
+    // Função para calcular subtotal de um item
+    function calcularSubtotalItem(itemForm) {
+        const quantidade = parseFloat(itemForm.querySelector('[name*="quantidade"]').value) || 0;
+        const precoUnitario = parseFloat(itemForm.querySelector('[name*="preco_unitario"]').value) || 0;
+        const descontoItem = parseFloat(itemForm.querySelector('[name*="desconto_item"]').value) || 0;
+        
+        const subtotal = (quantidade * precoUnitario) - descontoItem;
+        itemForm.querySelector('.item-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+        
+        return subtotal;
+    }
+    
+    // Função para calcular totais da venda
+    function calcularTotais() {
+        let subtotalGeral = 0;
+        const itemForms = document.querySelectorAll('.item-form');
+        
+        itemForms.forEach(itemForm => {
+            subtotalGeral += calcularSubtotalItem(itemForm);
+        });
+        
+        const descontoGeral = parseFloat(descontoInput.value) || 0;
+        const total = subtotalGeral - descontoGeral;
+        
+        document.getElementById('subtotal-resumo').textContent = `R$ ${subtotalGeral.toFixed(2)}`;
+        document.getElementById('desconto-resumo').textContent = `R$ ${descontoGeral.toFixed(2)}`;
+        document.getElementById('total-resumo').textContent = `R$ ${total.toFixed(2)}`;
+    }
+    
+    // Event listeners para campos de item
+    itensContainer.addEventListener('input', function(e) {
+        if (e.target.name.includes('quantidade') || e.target.name.includes('preco_unitario') || e.target.name.includes('desconto_item') || e.target.name.includes('produto')) {
+            calcularTotais();
+        }
+    });
+    
+    itensContainer.addEventListener('change', function(e) {
+        if (e.target.name.includes('produto')) {
+            // Ao selecionar produto, preencher automaticamente o preço
+            const produtoSelect = e.target;
+            const itemForm = produtoSelect.closest('.item-form');
+            const precoInput = itemForm.querySelector('[name*="preco_unitario"]');
+            
+            if (produtoSelect.value && precoInput) {
+                const selectedOption = produtoSelect.options[produtoSelect.selectedIndex];
+                const precoText = selectedOption.text.match(/R\$ ([\d.,]+)/);
+                if (precoText) {
+                    const preco = parseFloat(precoText[1].replace(',', '.'));
+                    precoInput.value = preco.toFixed(2);
+                }
+            }
+            calcularTotais();
+        }
+    });
+    
+    // Event listener para desconto geral
+    if (descontoInput) {
+        descontoInput.addEventListener('input', calcularTotais);
+    }
+    
+    // Função para adicionar novo item
+    function adicionarItem() {
+        const totalForms = document.getElementById('id_itens-TOTAL_FORMS');
+        if (!totalForms) {
+            console.error('Campo TOTAL_FORMS não encontrado');
+            return;
+        }
+        const currentForms = parseInt(totalForms.value);
+        const newFormNum = currentForms;
+        
+        // Criar novo item
+        const newItem = document.createElement('div');
+        newItem.className = 'item-form bg-gray-50 p-4 rounded-lg border';
+        newItem.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Produto *</label>
+                    <select name="itens-${newFormNum}-produto" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        ${produtosOptions}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade *</label>
+                    <input type="number" name="itens-${newFormNum}-quantidade" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="1" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Preço Unitário (R$) *</label>
+                    <input type="number" name="itens-${newFormNum}-preco_unitario" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Desconto (R$)</label>
+                    <input type="number" name="itens-${newFormNum}-desconto_item" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00">
+                </div>
+            </div>
+            <div class="mt-3 text-right">
+                <span class="text-sm text-gray-600">Subtotal: </span>
+                <span class="font-semibold text-blue-600 item-subtotal">R$ 0,00</span>
+            </div>
+        `;
+        
+        itensContainer.appendChild(newItem);
+        totalForms.value = currentForms + 1;
+        
+        // Adicionar event listeners ao novo item
+        const inputs = newItem.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', calcularTotais);
+            input.addEventListener('change', calcularTotais);
+        });
+    }
+    
+    // Event listener para botão adicionar item
+    if (adicionarItemBtn) {
+        adicionarItemBtn.addEventListener('click', adicionarItem);
+    }
+    
+    // Validação do formulário antes do envio
+    const vendaForm = document.getElementById('venda-form');
+    if (vendaForm) {
+        vendaForm.addEventListener('submit', function(e) {
+            const itemForms = document.querySelectorAll('.item-form');
+            let itemValido = false;
+            
+            for (let itemForm of itemForms) {
+                const produto = itemForm.querySelector('[name*="produto"]').value;
+                const quantidade = itemForm.querySelector('[name*="quantidade"]').value;
+                const preco = itemForm.querySelector('[name*="preco_unitario"]').value;
+                
+                if (produto && quantidade && preco) {
+                    itemValido = true;
+                    break;
+                }
+            }
+            
+            if (!itemValido) {
+                e.preventDefault();
+                alert('Pelo menos um item deve ser adicionado à venda com todos os campos preenchidos.');
+                return false;
+            }
+        });
+    }
+    
+    // Calcular totais iniciais
+    calcularTotais();
+    
+    // Se estiver editando, preencher os totais com os valores existentes
+    {% if venda %}
+    document.getElementById('subtotal-resumo').textContent = 'R$ {{ venda.subtotal|floatformat:2 }}';
+    document.getElementById('desconto-resumo').textContent = 'R$ {{ venda.desconto|floatformat:2 }}';
+    document.getElementById('total-resumo').textContent = 'R$ {{ venda.total|floatformat:2 }}';
+    {% endif %}
+});
+</script>
+{% endblock %}

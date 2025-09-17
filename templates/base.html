@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Isailtom Motos{% endblock %}</title>
+    {% load static %}
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'moto-blue': '#1e40af',
+                        'moto-red': '#dc2626',
+                        'moto-gray': '#374151',
+                        'primary': '#1e40af'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-moto-blue text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="{% static 'img/logo.jpg' %}" alt="Isailtom Motos" class="w-10 h-10">
+                    <div>
+                        <h1 class="text-2xl font-bold">Isailtom Motos</h1>
+                        <p class="text-sm text-blue-200">Sua loja de confiança</p>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="{% url 'usuarios:dashboard' %}" class="hover:text-blue-200 transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="{% url 'produtos:lista' %}" class="hover:text-blue-200 transition-colors">
+                        <i class="fas fa-box mr-2"></i>Produtos
+                    </a>
+                    <a href="{% url 'vendas:dashboard' %}" class="hover:text-blue-200 transition-colors">
+                        <i class="fas fa-chart-line mr-2"></i>Vendas
+                    </a>
+                    <a href="{% url 'vendas:lista_clientes' %}" class="hover:text-blue-200 transition-colors">
+                        <i class="fas fa-users mr-2"></i>Clientes
+                    </a>
+                    {% if user.is_proprietario %}
+                    <a href="{% url 'vendas:faturamento' %}" class="hover:text-blue-200 transition-colors">
+                        <i class="fas fa-dollar-sign mr-2"></i>Faturamento
+                    </a>
+                    {% endif %}
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <div class="relative group" x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+                                <i class="fas fa-user-circle text-xl"></i>
+                                <span>{{ user.get_full_name|default:user.username }}</span>
+                                <i class="fas fa-chevron-down text-sm"></i>
+                            </button>
+                            
+                            <div x-show="open" 
+                                 @click.away="open = false"
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                <a href="{% url 'usuarios:perfil' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user mr-2"></i>Meu Perfil
+                                </a>
+                                <a href="{% url 'usuarios:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'usuarios:login' %}" class="bg-white text-moto-blue hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors font-medium">
+                            <i class="fas fa-sign-in-alt mr-2"></i>→ Entrar
+                        </a>
+                        <a href="{% url 'usuarios:register' %}" class="bg-moto-red hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+                            <i class="fas fa-user-plus mr-2"></i>+ Cadastrar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    
+    {% if messages %}
+        <div class="container mx-auto px-4 mt-4">
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded-md {% if message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-100 border border-green-400 text-green-700{% else %}bg-blue-100 border border-blue-400 text-blue-700{% endif %}">
+                    <div class="flex items-center">
+                        {% if message.tags == 'error' %}
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                        {% elif message.tags == 'success' %}
+                            <i class="fas fa-check-circle mr-2"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle mr-2"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-moto-gray text-white mt-auto">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Isailtom Motos</h3>
+                    <p class="text-gray-300 mb-2">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        Rua José Paulino do Rêgo, 152 - João XXIII
+                    </p>
+                    <p class="text-gray-300 mb-2">
+                        <i class="fas fa-phone mr-2"></i>
+                        (84) 98179-4665
+                    </p>
+                    <p class="text-gray-300">
+                        <i class="fas fa-envelope mr-2"></i>
+                        iltonlobo461@gmail.com
+                    </p>
+                </div>
+                
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Links Rápidos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'produtos:lista' %}" class="text-gray-300 hover:text-white transition-colors">Produtos</a></li>
+                        <li><a href="{% url 'vendas:dashboard' %}" class="text-gray-300 hover:text-white transition-colors">Vendas</a></li>
+                        <li><a href="{% url 'usuarios:perfil' %}" class="text-gray-300 hover:text-white transition-colors">Meu Perfil</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Redes Sociais</h3>
+                    <div class="flex space-x-4">
+                        <a target="_blank" href="https://www.facebook.com/hiltom.lobo.isailtom?locale=pt_BR" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a target="_blank" href="https://www.instagram.com/isailtonmotos" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                        <a target="_blank" href="https://wa.me/5584981794665?text=Ola%252520me%252520interessei%252520pelas%252520motos" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-whatsapp text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-600 mt-8 pt-8 text-center">
+                <p class="text-gray-300">
+                    &copy; 2025 Isailtom Motos. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

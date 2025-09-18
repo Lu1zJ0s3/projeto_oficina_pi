@@ -80,7 +80,7 @@
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Faturamento Total</p>
                     <p class="text-2xl font-bold text-gray-900">
-                        R$ {{ faturamento_diario.values|sum:"total"|floatformat:2 }}
+                        R$ {{ faturamento_total|floatformat:2 }}
                     </p>
                 </div>
             </div>
@@ -95,7 +95,7 @@
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600">Lucro Estimado</p>
                     <p class="text-2xl font-bold text-gray-900">
-                        R$ {{ faturamento_diario.values|sum:"lucro"|floatformat:2 }}
+                        R$ {{ lucro_total|floatformat:2 }}
                     </p>
                 </div>
             </div>
@@ -163,16 +163,13 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('faturamentoChart').getContext('2d');
-    
-    const dados = {{ faturamento_diario|safe }};
+    const dados = JSON.parse('{{ faturamento_diario_json|escapejs }}');
     const labels = Object.keys(dados).map(data => {
         const d = new Date(data);
         return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
     }).reverse();
-    
     const valores = Object.values(dados).map(d => d.total).reverse();
     const lucros = Object.values(dados).map(d => d.lucro).reverse();
-    
     new Chart(ctx, {
         type: 'line',
         data: {

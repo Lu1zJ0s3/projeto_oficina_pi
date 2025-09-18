@@ -1,6 +1,3 @@
-"""
-URL configuration for isailtom_motos project.
-"""
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -8,9 +5,9 @@ from django.conf.urls.static import static
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from usuarios.views import UsuarioViewSet
+from usuarios.api.views import UsuarioViewSet
 from produtos.views import ProdutoViewSet, CategoriaViewSet, MarcaViewSet
-from vendas.views import VendaViewSet, ClienteViewSet, FaturamentoViewSet
+from vendas.api.views import VendaViewSet, ClienteViewSet, FaturamentoViewSet
 
 router = routers.DefaultRouter()
 router.register(r'usuarios', UsuarioViewSet)
@@ -23,16 +20,14 @@ router.register(r'faturamento', FaturamentoViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
-    path('api/usuarios/', include('usuarios.api_urls')),
-    
+    path('api/usuarios/', include('usuarios.api.urls')),
     path('api/', include(router.urls)),
-path('api/auth/', include('rest_framework.urls')),
-path('api/token/', obtain_auth_token, name='api_token_auth'),
-    
+    path('api/vendas/', include('vendas.api.urls')),
+    path('api/auth/', include('rest_framework.urls')),
+    path('api/token/', obtain_auth_token, name='api_token_auth'),
     path('', include('usuarios.urls')),
-path('produtos/', include('produtos.urls')),
-path('vendas/', include('vendas.urls')),
+    path('produtos/', include('produtos.urls')),
+    path('vendas/', include('vendas.urls')),
 ]
 
 if settings.DEBUG:

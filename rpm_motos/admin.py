@@ -4,8 +4,8 @@ from usuarios.models import Usuario
 from produtos.models import Categoria, Marca, Produto, ImagemProduto
 from vendas.models import Cliente, Venda, ItemVenda, Faturamento
 
-admin.site.site_header = "Isailtom Motos - Administração"
-admin.site.site_title = "Isailtom Motos Admin"
+admin.site.site_header = "RPM Motos - Administração"
+admin.site.site_title = "RPM Motos Admin"
 admin.site.index_title = "Bem-vindo ao painel administrativo"
 
 @admin.register(Usuario)

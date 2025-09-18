@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .models import Produto, Categoria, Marca, ImagemProduto
-from .serializers import (
+from .api.serializers import (
     ProdutoSerializer, 
     ProdutoListSerializer, 
     ProdutoDetailSerializer,
@@ -224,7 +224,7 @@ def lista_produtos(request):
         'produtos': produtos,
         'categorias': categorias,
         'marcas': marcas,
-        'titulo': 'Produtos - Isailtom Motos'
+        'titulo': 'Produtos - RPM Motos'
     }
     return render(request, 'produtos/lista.html', context)
 
@@ -234,7 +234,7 @@ def detalhe_produto(request, pk):
     produto = get_object_or_404(Produto, pk=pk)
     context = {
         'produto': produto,
-        'titulo': f'{produto.nome} - Isailtom Motos'
+        'titulo': f'{produto.nome} - RPM Motos'
     }
     return render(request, 'produtos/detalhe.html', context)
 
@@ -252,7 +252,7 @@ def criar_produto(request):
     
     context = {
         'form': form,
-        'titulo': 'Novo Produto - Isailtom Motos'
+        'titulo': 'Novo Produto - RPM Motos'
     }
     return render(request, 'produtos/form.html', context)
 
@@ -272,7 +272,7 @@ def editar_produto(request, pk):
     context = {
         'form': form,
         'produto': produto,
-        'titulo': f'Editar {produto.nome} - Isailtom Motos'
+        'titulo': f'Editar {produto.nome} - RPM Motos'
     }
     return render(request, 'produtos/form.html', context)
 
@@ -293,6 +293,6 @@ def estoque_produtos(request):
         'produtos_em_estoque': produtos_em_estoque,
         'produtos_estoque_baixo': produtos_estoque_baixo,
         'produtos_sem_estoque': produtos_sem_estoque,
-        'titulo': 'Controle de Estoque - Isailtom Motos'
+        'titulo': 'Controle de Estoque - RPM Motos'
     }
     return render(request, 'produtos/estoque.html', context)

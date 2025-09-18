@@ -1,5 +1,5 @@
 """
-WSGI config for isailtom_motos project.
+WSGI config for rpm_motos project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'isailtom_motos.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rpm_motos.settings')
 
 application = get_wsgi_application()
